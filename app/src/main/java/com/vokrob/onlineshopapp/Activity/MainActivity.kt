@@ -1,4 +1,4 @@
-package com.vokrob.onlineshopapp
+package com.vokrob.onlineshopapp.Activity
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -55,7 +55,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.vokrob.onlineshopapp.Model.CategoryModel
+import com.vokrob.onlineshopapp.Model.ItemsModel
 import com.vokrob.onlineshopapp.Model.SliderModel
+import com.vokrob.onlineshopapp.R
 import com.vokrob.onlineshopapp.ViewModel.MainViewModel
 
 class MainActivity : BaseActivity() {
@@ -73,9 +75,11 @@ fun MainActivityScreen() {
 
     val banners = remember { mutableStateListOf<SliderModel>() }
     val categories = remember { mutableStateListOf<CategoryModel>() }
+    val recommended = remember { mutableStateListOf<ItemsModel>() }
 
     var showBannerLoading by remember { mutableStateOf(true) }
     var showCategoryLoading by remember { mutableStateOf(true) }
+    var showRecommendedLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         viewModel.loadBanners()
@@ -94,6 +98,16 @@ fun MainActivityScreen() {
             categories.clear()
             categories.addAll(it)
             showCategoryLoading = false
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadRecommended()
+
+        viewModel.recommended.observeForever {
+            recommended.clear()
+            recommended.addAll(it)
+            showRecommendedLoading = false
         }
     }
 
@@ -183,6 +197,30 @@ fun MainActivityScreen() {
                         CircularProgressIndicator()
                     }
                 } else CategoryList(categories)
+            }
+
+            item {
+                SectionTitle(
+                    "Recommendation",
+                    "See All"
+                )
+            }
+
+            item {
+                if (showRecommendedLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else ListItems(recommended)
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

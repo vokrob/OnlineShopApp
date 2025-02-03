@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,30 @@ fun ListItems(items: List<ItemsModel>) {
         columns = GridCells.Fixed(2),
         modifier = Modifier
             .height(500.dp)
+            .padding(
+                start = 8.dp,
+                end = 8.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(items.size) { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                RecommendedItem(items, row)
+            }
+        }
+    }
+}
+
+@Composable
+fun ListItemsFullSize(items: List<ItemsModel>) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier
+            .fillMaxSize()
             .padding(
                 start = 8.dp,
                 end = 8.dp

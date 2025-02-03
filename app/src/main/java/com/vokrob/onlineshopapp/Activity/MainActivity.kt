@@ -1,6 +1,9 @@
 package com.vokrob.onlineshopapp.Activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,6 +54,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -239,6 +243,7 @@ fun MainActivityScreen(onCartClick: () -> Unit = {}) {
 @Composable
 fun CategoryList(categories: SnapshotStateList<CategoryModel>) {
     var selectedIndex by remember { mutableStateOf(-1) }
+    val context = LocalContext.current
 
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -253,7 +258,19 @@ fun CategoryList(categories: SnapshotStateList<CategoryModel>) {
             CategoryItem(
                 item = categories[index],
                 isSelected = selectedIndex == index,
-                onItemClick = { selectedIndex = index }
+                onItemClick = {
+                    selectedIndex = index
+                    Handler(Looper.getMainLooper()).postDelayed(
+                        {
+                            val intent = Intent(context, ListItemsActivity::class.java).apply {
+                                putExtra("id", categories[index].id.toString())
+                                putExtra("title", categories[index].title)
+                            }
+                            startActivity(context, intent, null)
+                        },
+                        1000
+                    )
+                }
             )
         }
     }
